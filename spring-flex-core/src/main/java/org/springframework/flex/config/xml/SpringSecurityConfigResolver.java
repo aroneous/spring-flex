@@ -27,9 +27,17 @@ import org.springframework.util.ClassUtils;
 public class SpringSecurityConfigResolver {
 
     private static final String SECURITY3_CONFIG_HELPER_CLASSNAME = "org.springframework.flex.config.xml.SpringSecurity3ConfigHelper";
+    private static final String SECURITY4_CONFIG_HELPER_CLASSNAME = "org.springframework.flex.config.xml.SpringSecurity4ConfigHelper";
     
     public static SpringSecurityConfigHelper resolve() {
-        return createConfigHelper(SECURITY3_CONFIG_HELPER_CLASSNAME);
+        try {
+            // Try to load the Spring Security 4 integration. This won't be available unless the spring-flex-security4
+            // JAR is present
+            return createConfigHelper(SECURITY4_CONFIG_HELPER_CLASSNAME);
+        } catch (Exception e) {
+            // If not available. use Spring Security 3 integration instead
+            return createConfigHelper(SECURITY3_CONFIG_HELPER_CLASSNAME);
+        }
     }
     
     static SpringSecurityConfigHelper createConfigHelper (String helperClassName) {
